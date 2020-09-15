@@ -142,8 +142,6 @@ class RegressionModel(pl.LightningModule):
 
 
 def main(hparams):
-    if hparams.model == 'metnet':
-        torch.backends.cudnn.enabled = False
     hparams = vars(hparams)
     hparams, loaderDict, normalizer, collate = get_data(hparams)
     
@@ -153,7 +151,6 @@ def main(hparams):
     add_device_hparams(hparams)
 
     # define logger
-    hparams['log_path'] = "/data/e2e_forecast_logs/" + hparams['model']+ "/"
     Path(hparams['log_path']).mkdir(parents=True, exist_ok=True)
     logger = loggers.TensorBoardLogger(hparams['log_path'], version=hparams['version'])
     logger.log_hyperparams(params=hparams)
@@ -161,13 +158,11 @@ def main(hparams):
     # define model
     model = RegressionModel(hparams, loaderDict['train'], loaderDict['valid'], normalizer, collate)
 
-    chkpt = None if hparams['load'] is None else get_checkpoint_path(log_dir)
+    chkpt = None if hparams['load'] is None else get_checkpoint_path(hparams['load'])
     trainer = pl.Trainer(
         gpus=hparams['gpus'],
         logger=logger,
         max_epochs=hparams['epochs'],
-        gradient_clip_val=hparams['clip_grad'],
-        accumulate_grad_batches=hparams['grad_batches'],
         distributed_backend=hparams['distributed_backend'],
         precision=16 if hparams['use_amp'] else 32,
         default_root_dir=hparams['log_path'],
@@ -184,6 +179,7 @@ def main_test(hparams):
     phase = hparams.phase
     log_dir = hparams.load
     hparams = vars(hparams)
+    add_device_hparams(hparams)
 
     # Load trained model
     print(f'Loading from {log_dir} to evaluate {phase} data.')
@@ -203,14 +199,14 @@ def main_test(hparams):
     # Evaluate the model
     test_results = trainer.test(model, test_dataloaders=test_dataloader)
     if isinstance(test_results, list):
-        test = test[0]
-    rmse = {'rmse_' + n: np.sqrt(test[n]) for n in test}
-    test = {**rmse, **test}
+        test_results = test_results[0]
+    rmse = {'rmse_' + n: np.sqrt(test_results[n]) for n in test_results}
+    test_results = {**rmse, **test_results}
 
     # Save evaluation results
-    results_path = hparams['log_path'] + 'default/' + hparams['version'] + f'/{phase}_results.json'
+    results_path = Path(log_dir) / f'{phase}_results.json'
     with open(results_path, 'w') as fp:
-        json.dump(test, fp, sort_keys=True, indent=4)
+        json.dump(test_results, fp, sort_keys=True, indent=4)
     print('saved to ', results_path)
 
 
@@ -263,13 +259,15 @@ if __name__ == '__main__':
     parser.add_argument("--grid", type=float, default=5.625, choices=[5.625, 1.4], help='Data resolution')
     parser.add_argument("--sample_time_window", type=int, default=12, help="Duration of sample time window, in hours")
     parser.add_argument("--sample_freq", type=int, default=3, help="Data frequency within the sample time window, in hours")
-    parser.add_argument("--forecast_time_window", type=int, default=72, help="Maximum lead time, in hours")
+    parser.add_argument("--forecast_time_window", type=int, default=120, help="Maximum lead time, in hours")
     parser.add_argument("--forecast_freq", type=int, default=24, help="Forecast frequency")
     parser.add_argument("--inc_time", action='store_true', help='Including hour/day/month in input')
     # 
     parser.add_argument('--config_file', default='./config.yml', type=FileType(mode='r'), help='Config file path')
     parser.add_argument('--data_paths', nargs='+', help='Paths for dill files')
     parser.add_argument('--norm_path', type=str, help='Path of json file storing  normalisation statistics')
+    parser.add_argument('--log_path', type=str, help='Path of folder to log training and store model')
+
     # Model
     parser.add_argument("--hidden_1", type=int, default=384, help="No. of hidden units (lstm).")
     parser.add_argument("--hidden_2", type=int, default=32, help="No. of hidden units (fc).")

@@ -34,3 +34,26 @@ To evaluate trained models on the test set, run the following.
 ```
 python3 run_benchmark.py --test --phase test --load {MODEL_PATH}
 ```
+
+
+# Visualizing Predictions
+
+To visualize the predictions, run the following. 
+
+```
+python3 -m src.benchmark.plot_outputs --load {MODEL_PATH} --nc_file {ANY_NC_FILE_PATH}
+```
+
+Example predictions for a randome test date (12 July 2019) is shown below:
+
+### Truth
+![](https://i.imgur.com/O1Fk0XS.gif)
+
+### Simsat
+![](https://i.imgur.com/uMvodFI.gif)
+
+### ERA
+![](https://i.imgur.com/UbOe0Ia.gif)
+
+### Simsat & ERA
+![](https://i.imgur.com/tX5pmLP.gif)

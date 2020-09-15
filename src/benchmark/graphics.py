@@ -1,7 +1,6 @@
 import torch
 from torchvision.utils import make_grid
 
-
 def plot_random_outputs_multi_ts(sample_X, sample_y, pred_y,
         idx_dictionary, normalizer, order):
     """
@@ -30,3 +29,4 @@ def plot_random_outputs_multi_ts(sample_X, sample_y, pred_y,
     nrow = num_lead_times
     grid = make_grid(sample_images, nrow=nrow)
     return grid
+

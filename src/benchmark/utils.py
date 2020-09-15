@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import yaml
 
 def add_yml_params(args):
-    data = yaml.load(args.config_file)
+    data = yaml.load(args.config_file, Loader=yaml.Loader)
     delattr(args, 'config_file')
     arg_dict = args.__dict__
     for key, value in data.items():

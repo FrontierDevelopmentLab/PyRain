@@ -1,2 +1,3 @@
 data_paths: ["/mnt/disks/train-data-era5625-aaai/era5625_aaai.dill", "/mnt/disks/train-data-imerg5625/imerg_5625/imerg_5625.dill", "/mnt/disks/train-data5/mmap/simsat5625/simsat5625.dill"]
-norm_path: '/home/egctong/precip-forecasting-e2e-baselines/src/test/normalisation/5625__16-04-01_12:00to17-12-31_11:00.json'
+norm_path: "/home/egctong/precip-forecasting-e2e-baselines/src/test/normalisation/5625__16-04-01_12:00to17-12-31_11:00.json"
+log_path: "/data/forecast_benchmark/"
