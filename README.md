@@ -1,5 +1,9 @@
 # RainBench
-You should update the data paths in config.yml.
+
+## Downloading the Dataset
+Please register [here](https://forms.gle/3AdMJsKtuJ8M1E1Y8) to download the RainBench dataset.
+
+After downloading, you should update the data paths in config.yml.
 
 ## Forecasting Precipitation from ERA
 Specify `source` as {'simsat', 'simsat_era', 'era16_3'} to use data (*from 2016*) from Simsat alone, ERA5 alone, or both Simsat and ERA5, respectively. 

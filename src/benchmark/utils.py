@@ -5,17 +5,26 @@ import torch
 import numpy as np
 from datetime import datetime, timedelta
 import yaml
+import random
+import os
+
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 
 def add_yml_params(args):
     data = yaml.load(args.config_file, Loader=yaml.Loader)
     delattr(args, 'config_file')
     arg_dict = args.__dict__
     for key, value in data.items():
-        if isinstance(value, list):
-            for v in value:
-                arg_dict[key].append(v)
-        else:
-            arg_dict[key] = value
+        arg_dict[key] = value
 
 
 def get_lat2d(grid, dataset=None):

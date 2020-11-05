@@ -12,7 +12,7 @@ import torch
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning import loggers
-from src.benchmark.utils import add_device_hparams, get_lat2d, add_yml_params
+from src.benchmark.utils import add_device_hparams, get_lat2d, add_yml_params, seed_everything
 from src.benchmark.collect_data import get_data, get_checkpoint_path
 from src.benchmark.models import ConvLSTMForecaster
 from src.benchmark.graphics import plot_random_outputs_multi_ts
@@ -251,6 +251,7 @@ def main_baselines(hparams):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
+    parser.add_argument("--seed", type=int, default=2020, help="random seed")
     # Data
     parser.add_argument("--persistence", action='store_true', help='Compute persistence baseline')
     parser.add_argument("--climatology", action='store_true', help='Compute climatology baseline')
@@ -287,13 +288,15 @@ if __name__ == '__main__':
     parser.add_argument("--auto_bsz", action='store_true', help='Auto select batch size.')
     # Monitoring
     parser.add_argument("--version", type=str, help='Version tag for tensorboard')
-    parser.add_argument("--plot", type=bool, help='Plot outputs on tensorboard')
+    parser.add_argument("--plot", action='store_true', help='Plot outputs on tensorboard')
 
     hparams = parser.parse_args()
 
     if hparams.config_file:
         add_yml_params(hparams)
 
+    seed_everything(hparams.seed)
+    
     if hparams.test:
         main_test(hparams)
     elif hparams.persistence or hparams.climatology:
