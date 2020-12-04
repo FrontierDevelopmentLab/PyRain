@@ -390,6 +390,7 @@ class Dataset(torch.utils.data.Dataset):
                 vbl_name = vbl_section["vbl"]
                 if vbl_name in ["__dummy__"]:  # dummy variables can be used to enforce variable spreads
                     continue
+
                 if "t" not in vbl_section:
                     if not self.get_ts_only_mode:
                         sample_results[sample_section_name][vbl_section_name] = np.copy(self.dataset[vbl_name])
@@ -406,6 +407,25 @@ class Dataset(torch.utils.data.Dataset):
                         indices_sampled.append(self._get_file_indices(vbl_t + sample_ts, vbl_name, None))
                     if not isinstance(sample_results[sample_section_name][vbl_section_name], np.ndarray):
                         print(vbl_section_name, type(sample_results[sample_section_name][vbl_section_name]))
+
+                # "aggregation mode" allows for sample section slices to be aggregated over time in various ways
+                agg_mode = vbl_section["agg_mode"] if "agg_mode" in vbl_section else None
+                if agg_mode is not None:
+                    if callable(agg_mode):
+                        sample_results[sample_section_name][vbl_section_name] = \
+                            agg_mode(sample_results[sample_section_name][vbl_section_name])
+                    elif agg_mode in ["sum"]:
+                        sample_results[sample_section_name][vbl_section_name] = \
+                            np.sum(sample_results[sample_section_name][vbl_section_name], axis=0, keepdims=True)
+                    elif agg_mode in ["mean"]:
+                        sample_results[sample_section_name][vbl_section_name] =\
+                            np.mean(sample_results[sample_section_name][vbl_section_name], axis=0, keepdims=True)
+                    elif agg_mode in ["max"]:
+                        sample_results[sample_section_name][vbl_section_name] = \
+                            np.max(sample_results[sample_section_name][vbl_section_name], axis=0, keepdims=True)
+                    elif agg_mode in ["min"]:
+                        sample_results[sample_section_name][vbl_section_name] = \
+                            np.min(sample_results[sample_section_name][vbl_section_name], axis=0, keepdims=True)
 
         if self.debug_mode:
             return ts_sampled, indices_sampled

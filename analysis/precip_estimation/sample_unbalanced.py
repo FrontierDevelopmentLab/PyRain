@@ -110,8 +110,12 @@ if __name__ == "__main__":
                             "t": np.array([dlt]) * 3600,
                             "interpolate": ["nan", "nearest_past", "nearest_future"][1]},
                 },
+            #"label": {"tp": {"vbl": "imerg5625/precipitationcal",
+            #                 "t": np.array([lt]) * 3600,
+            #                 "interpolate": ["nan", "nearest_past", "nearest_future"][1]}}}
             "label": {"tp": {"vbl": "imerg5625/precipitationcal",
-                             "t": np.array([lt]) * 3600,
+                             "agg_mode": "sum",
+                             "t": np.array([lt - _p for _p in reversed(range(6))]) * 3600,
                              "interpolate": ["nan", "nearest_past", "nearest_future"][1]}}}
     }
 
