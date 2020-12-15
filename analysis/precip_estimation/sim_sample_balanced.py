@@ -7,7 +7,7 @@ from multiprocessing import Pool, TimeoutError
 from functools import partial
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from dataloader.fast_dataloader import Dataset
+from dataloader.memmap_dataloader import Dataset
 
 
 if __name__ == "__main__":

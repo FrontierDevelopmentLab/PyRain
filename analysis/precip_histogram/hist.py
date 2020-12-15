@@ -6,7 +6,7 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
-from dataloader.fast_dataloader import Dataset
+from dataloader.memmap_dataloader import Dataset
 
 if __name__ == "__main__":
 
