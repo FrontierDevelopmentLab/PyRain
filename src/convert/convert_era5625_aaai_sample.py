@@ -8,8 +8,8 @@ if __name__ == "__main__":
     pressure_to_idx = {50:0, 100:1, 150:2, 200:3, 250:4, 300:5, 400:6, 500:7, 600:8, 700:9, 850:10, 925:11, 1000:12}
     idx_to_pressure = {v:k for k,v in pressure_to_idx.items()}
 
-    years=list(range(1979,2020))
-    dataset_name = "era5625"
+    years=list(range(2018,2020))
+    dataset_name = "era5625_sample"
     input_path = "EDIT INPUT PATH TO NETCDF FOLDER"
     output_path = os.path.join("EDIT OUTPUT PATH WHERE MEMMAPS ARE TO BE CREATED", dataset_name)
     if not os.path.exists(output_path):
@@ -51,59 +51,59 @@ if __name__ == "__main__":
     from copy import deepcopy
     variables_era_2019 = deepcopy(variables_era)
 
-    era_extra_pressure_levels = [300, 500, 850] #, 850]
-    for i, p in enumerate(era_extra_pressure_levels):
-        variables_era.append({"name": "ciwc".format(p),
-                              "ftemplate": os.path.join(input_path, "specific_cloud_ice_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
-                              "dims": (32, 64),
-                              "levels": list((pressure_to_idx[p],)),
-                              "p_level": p})
-        variables_era.append({"name": "clwc".format(p),
-                              "ftemplate": os.path.join(input_path, "specific_cloud_liquid_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
-                              "dims": (32, 64),
-                              "levels": list((pressure_to_idx[p],)),
-                              "p_level": p})
-        variables_era.append({"name": "t",
-                              "ftemplate": os.path.join(input_path, "temperature_{}_5.625deg.nc"),
-                              "dims": (32, 64),
-                              "levels": list((pressure_to_idx[p],)),
-                              "p_level": p}),
-        variables_era.append({"name": "z",
-                             "ftemplate": os.path.join(input_path, "geopotential_{}_5.625deg.nc"),
-                             "dims": (32, 64),
-                             "levels": list((pressure_to_idx[p],))}),
-        variables_era.append({"name": "q",
-                             "ftemplate": os.path.join(input_path, "specific_humidity_{}_5.625deg.nc"),
-                             "dims": (32, 64),
-                             "levels": list((pressure_to_idx[p],))}),
+    # era_extra_pressure_levels = [300, 500, 850] #, 850]
+    # for i, p in enumerate(era_extra_pressure_levels):
+    #     variables_era.append({"name": "ciwc".format(p),
+    #                           "ftemplate": os.path.join(input_path, "specific_cloud_ice_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                           "dims": (32, 64),
+    #                           "levels": list((pressure_to_idx[p],)),
+    #                           "p_level": p})
+    #     variables_era.append({"name": "clwc".format(p),
+    #                           "ftemplate": os.path.join(input_path, "specific_cloud_liquid_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                           "dims": (32, 64),
+    #                           "levels": list((pressure_to_idx[p],)),
+    #                           "p_level": p})
+    #     variables_era.append({"name": "t",
+    #                           "ftemplate": os.path.join(input_path, "temperature_{}_5.625deg.nc"),
+    #                           "dims": (32, 64),
+    #                           "levels": list((pressure_to_idx[p],)),
+    #                           "p_level": p}),
+    #     variables_era.append({"name": "z",
+    #                          "ftemplate": os.path.join(input_path, "geopotential_{}_5.625deg.nc"),
+    #                          "dims": (32, 64),
+    #                          "levels": list((pressure_to_idx[p],))}),
+    #     variables_era.append({"name": "q",
+    #                          "ftemplate": os.path.join(input_path, "specific_humidity_{}_5.625deg.nc"),
+    #                          "dims": (32, 64),
+    #                          "levels": list((pressure_to_idx[p],))}),
 
-    era_extra_pressure_levels = [300, 500, 850] #, 850]
-    for i, p in enumerate(era_extra_pressure_levels):
-        variables_era_2019.append({"name": "ciwc".format(p),
-                              "ftemplate": os.path.join(input_path, "specific_cloud_ice_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
-                              "dims": (32, 64),
-                              "levels": list((pressure_to_idx[p],)),
-                              "p_level": p})
-        variables_era_2019.append({"name": "clwc".format(p),
-                              "ftemplate": os.path.join(input_path, "specific_cloud_liquid_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
-                              "dims": (32, 64),
-                              "levels": list((pressure_to_idx[p],)),
-                              "p_level": p})
-        variables_era_2019.append({"name": "t",
-                              "ftemplate": os.path.join(input_path, "temperature_{}_"+str(int(p))+"_5.625deg.nc"),
-                              "dims": (32, 64),
-                              "levels": list((pressure_to_idx[p],)),
-                              "p_level": p}),
-        variables_era_2019.append({"name": "z",
-                             "ftemplate": os.path.join(input_path, "geopotential_{}_"+str(int(p))+"_5.625deg.nc"),
-                             "dims": (32, 64),
-                             "levels": list((pressure_to_idx[p],))}),
-        variables_era_2019.append({"name": "q",
-                             "ftemplate": os.path.join(input_path, "specific_humidity_{}_"+str(int(p))+"_5.625deg.nc"),
-                             "dims": (32, 64),
-                             "levels": list((pressure_to_idx[p],))}),
+    # era_extra_pressure_levels = [300, 500, 850] #, 850]
+    # for i, p in enumerate(era_extra_pressure_levels):
+    #     variables_era_2019.append({"name": "ciwc".format(p),
+    #                           "ftemplate": os.path.join(input_path, "specific_cloud_ice_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                           "dims": (32, 64),
+    #                           "levels": list((pressure_to_idx[p],)),
+    #                           "p_level": p})
+    #     variables_era_2019.append({"name": "clwc".format(p),
+    #                           "ftemplate": os.path.join(input_path, "specific_cloud_liquid_water_content_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                           "dims": (32, 64),
+    #                           "levels": list((pressure_to_idx[p],)),
+    #                           "p_level": p})
+    #     variables_era_2019.append({"name": "t",
+    #                           "ftemplate": os.path.join(input_path, "temperature_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                           "dims": (32, 64),
+    #                           "levels": list((pressure_to_idx[p],)),
+    #                           "p_level": p}),
+    #     variables_era_2019.append({"name": "z",
+    #                          "ftemplate": os.path.join(input_path, "geopotential_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                          "dims": (32, 64),
+    #                          "levels": list((pressure_to_idx[p],))}),
+    #     variables_era_2019.append({"name": "q",
+    #                          "ftemplate": os.path.join(input_path, "specific_humidity_{}_"+str(int(p))+"_5.625deg.nc"),
+    #                          "dims": (32, 64),
+    #                          "levels": list((pressure_to_idx[p],))}),
 
-    era_const_path = os.path.join(output_path, "{}__era5625_const.mmap".format(dataset_name)) 
+    era_const_path = os.path.join(output_path, "{}__era5625_const.mmap".format(dataset_name))
     print("Writing const values...")
     const_dims = (sum([1 for vg in variables_const]), 32, 64)
     era_const_dims = const_dims
@@ -201,8 +201,8 @@ if __name__ == "__main__":
                     "type":"temp",
                     "dims": v["dims"],
                     "offset": 0 if not i else sum([len(vg["levels"]) for vg in variables_era[:i]]),
-                    "first_ts": datetime.datetime(1979, 1, 1, 0).timestamp() if v["name"] not in ["tisr", "tp"] else datetime.datetime(1979, 1, 1, 7).timestamp(),
-                    "last_ts": datetime.datetime(2019, 12, 31, 23).timestamp(),# if v["name"] not in ["ciwc", "clwc"] else datetime.datetime(2000,12,31,23).timestamp(),
+                    "first_ts": datetime.datetime(years[0], 1, 1, 0).timestamp(),
+                    "last_ts": datetime.datetime(years[1], 12, 31, 23).timestamp(),# if v["name"] not in ["ciwc", "clwc"] else datetime.datetime(2000,12,31,23).timestamp(),
                     "tfreq_s": 3600,
                     "levels": v["levels"]}
 
@@ -218,7 +218,7 @@ if __name__ == "__main__":
                                             "tfreq_s": None},
                      "{}__era5625.mmap".format(dataset_name): {"dims": era_dims,
                                       "dtype": "float32",
-                                      "daterange": (datetime.datetime(1979, 1, 1, 0).timestamp(), datetime.datetime(2018, 12, 31, 23).timestamp()),
+                                      "daterange": (datetime.datetime(years[0], 1, 1, 0).timestamp(), datetime.datetime(years[1], 12, 31, 23).timestamp()),
                                       "tfreq_s": 3600},
                      }
 

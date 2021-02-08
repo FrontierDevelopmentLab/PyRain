@@ -10,8 +10,8 @@ if __name__ == "__main__":
     dataset_range=(datetime.datetime(2000, 6, 1, 0), datetime.datetime(2019, 12, 31, 23))
 
 
-    years=list(range(2000,2020))
-    dataset_name = "imerg5625"
+    years=list(range(2018,2020))
+    dataset_name = "imerg5625_sample"
     input_path = "EDIT INPUT PATH TO NETCDF FOLDER"
     output_path = os.path.join("EDIT OUTPUT PATH WHERE MEMMAPS ARE TO BE CREATED", dataset_name)
 
@@ -25,10 +25,10 @@ if __name__ == "__main__":
          "levels": list(range(1))},
     ]
 
-    imerg25bi_path = os.path.join(output_path, "{}__imerg5625bi.mmap".format(dataset_name))
+    imerg25bi_path = os.path.join(output_path, "{}__imerg5625.mmap".format(dataset_name))
     n_rec_dim = variables_imerg25bi[0]["dims"]
     imerg25bi_sample_freq = 1 
-    n_recs = ((datetime.datetime(2019, 12, 31, 23).timestamp()-datetime.datetime(2000, 6, 1, 0).timestamp()) // 3600 ) // imerg25bi_sample_freq + 1
+    n_recs = ((datetime.datetime(2019, 12, 31, 23).timestamp()-datetime.datetime(years[0], 1, 1, 0).timestamp()) // 3600 ) // imerg25bi_sample_freq + 1
     n_rec_channels = sum([len(vg["levels"]) for vg in variables_imerg25bi])
     dims = (int(n_recs), int(n_rec_channels), *n_rec_dim)
     print("dims: ", dims)
@@ -48,8 +48,8 @@ if __name__ == "__main__":
             if y < dataset_range[0].year:
                 print("iMERG25bi: no data available for year {}".format(y))
                 return
-            t_offset = int((datetime.datetime(y, m, d, 0).timestamp() - datetime.datetime(max(min(years), dataset_range[0].year), 6, 1, 0).timestamp()) // 3600) // imerg25bi_sample_freq
-            t_end = int((datetime.datetime(y, m, d, 23).timestamp() - datetime.datetime(max(min(years), dataset_range[0].year), 6, 1, 0).timestamp()) // 3600) // imerg25bi_sample_freq + 1
+            t_offset = int((datetime.datetime(y, m, d, 0).timestamp() - datetime.datetime(years[0], 1, 1, 0).timestamp()) // 3600) // imerg25bi_sample_freq
+            t_end = int((datetime.datetime(y, m, d, 23).timestamp() - datetime.datetime(years[0], 1, 1, 0).timestamp()) // 3600) // imerg25bi_sample_freq + 1
             for i, vbl in enumerate(vbls):
                 print("SimSat writing year {} month {} day {} vbl {}...".format(y, m, d, vbl["name"]))
                 rootgrp = netcdf_Dataset(os.path.join(input_path, vbl["ftemplate"].format(y, m, d)), "r", format="NETCDF4")
@@ -62,8 +62,8 @@ if __name__ == "__main__":
                     raise Exception("{} {} {} {} {} {} {} {} {} {} ".format(y, m, d, vbl["name"], vbl["levels"], t_offset, t_end, root_channel, e, rootgrp[vbl["name"]][:].shape))
 
         ymd = []
-        dd = dataset_range[0]
-        while dd <= dataset_range[1]:
+        dd = datetime.datetime(years[0], 1, 1, 0)
+        while dd <= datetime.datetime(years[1], 12, 31, 23):
             ymd.append((dd.year, dd.month, dd.day))
             dd += datetime.timedelta(days=1)
 
@@ -87,15 +87,16 @@ if __name__ == "__main__":
                     "type":"temp",
                     "dims": v["dims"],
                     "offset": 0 if not i else sum([len(vg["levels"]) for vg in variables_imerg25bi[:i]]),
-                    "first_ts": dataset_range[0].timestamp(),
-                    "last_ts": dataset_range[1].timestamp(),
+                    "first_ts": datetime.datetime(years[0], 1, 1, 0).timestamp(),
+                    "last_ts": datetime.datetime(years[1], 12, 31, 23).timestamp(),
                     "tfreq_s": 3600,
                     "levels": v["levels"]}
         dct["variables"]["imerg5625/{}".format(v["name"])] = vbl_dict
 
     dct["memmap"] = {"{}__imerg5625.mmap".format(dataset_name): {"dims": imerg25bi_dims,
                                             "dtype": "float32",
-                                            "daterange": (dataset_range[0].timestamp(), dataset_range[1].timestamp()),
+                                            "daterange": (datetime.datetime(years[0], 1, 1, 0).timestamp(),
+                                                          datetime.datetime(years[1], 12, 31, 23).timestamp()),
                                             "tfreq_s": 3600}
                      }
 

@@ -8,10 +8,11 @@ if __name__ == "__main__":
     pressure_to_idx = {50:0, 100:1, 150:2, 200:3, 250:4, 300:5, 400:6, 500:7, 600:8, 700:9, 850:10, 925:11, 1000:12}
     idx_to_pressure = {v:k for k,v in pressure_to_idx.items()}
 
-    years=list(range(2016,2021))
+    years=list(range(2018,2020))
     dataset_name = "simsat5625"
     input_path = "EDIT INPUT PATH TO NETCDF FOLDER"
     output_path = os.path.join("EDIT OUTPUT PATH WHERE MEMMAPS ARE TO BE CREATED", dataset_name)
+
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     simsat_path = os.path.join(output_path, "{}__simsat5625.mmap".format(dataset_name))
     n_rec_dim = (32, 64)
     simsat_sample_freq = 3 # every 3 hours
-    n_recs = ((ds_daterange[1].timestamp()-ds_daterange[0].timestamp()) // 3600 ) // simsat_sample_freq + 1
+    n_recs = ((datetime.datetime(2019, 12, 31, 23).timestamp()-datetime.datetime(years[0], 1, 1, 0).timestamp()) // 3600 ) // simsat_sample_freq + 1
     n_rec_channels = sum([len(vg["levels"]) for vg in variables_simsat])
     dims = (int(n_recs), int(n_rec_channels), *n_rec_dim)
     simsat_dims = dims
@@ -53,7 +54,7 @@ if __name__ == "__main__":
             if y == 2020:
                 t_end = int((ts_daterange[1].timestamp() - ds_daterange[0].timestamp()) // 3600) // simsat_sample_freq + 1
             else:
-                t_end = int((datetime.datetime(y, 12, 31, 23).timestamp() - ds_daterange[0].timestamp()) // 3600) // simsat_sample_freq + 1
+                t_end = int((datetime.datetime(y, 12, 31, 23).timestamp() - datetime.datetime(years[0], 1, 1, 0).timestamp()) // 3600) // simsat_sample_freq + 1
             print("year: ", y, " t_offset: ", t_offset, "t_end:", t_end)
             for i, vbl in enumerate(vbls):
                 print("SimSat writing year {} vbl {}...".format(y, vbl["name"]))
@@ -86,16 +87,16 @@ if __name__ == "__main__":
                     "type":"temp",
                     "dims": v["dims"],
                     "offset": 0 if not i else sum([len(vg["levels"]) for vg in variables_simsat[:i]]),
-                    "first_ts": ts_daterange[0].timestamp(),
-                    "last_ts": ts_daterange[1].timestamp(),
+                    "first_ts": datetime.datetime(years[0], 1, 1, 0).timestamp(),
+                    "last_ts": datetime.datetime(years[1], 12, 31, 23).timestamp(),
                     "tfreq_s": 3600*3,
                     "levels": v["levels"]}
         dct["variables"]["simsat5625/{}".format(v["name"])] = vbl_dict
 
     dct["memmap"] = {"{}__simsat5625.mmap".format(dataset_name): {"dims": simsat_dims,
                                             "dtype": "float32",
-                                            "daterange": (ts_daterange[0].timestamp(),
-                                                          ts_daterange[1].timestamp()),
+                                            "daterange": (datetime.datetime(years[0], 1, 1, 0).timestamp(),
+                                                          datetime.datetime(years[1], 12, 31, 23).timestamp()),
                                             "tfreq_s": 3600*3}
                      }
 
