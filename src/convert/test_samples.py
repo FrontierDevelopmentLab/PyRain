@@ -3,39 +3,9 @@ import datetime
 
 from src.dataloader import Dataset
 
-datapath = ["/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/era5625_sample/era5625_sample.dill",
-           "/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/imerg5625_sample/imerg5625_sample.dill",
-            "/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-#"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/tmp/simsatter/simsat5625.dill"]
-
-#"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-            #"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/tmp/simsatter/simsat5625.dill"]
-#"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-#"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/tmp/simsatter/simsat5625.dill"]
-#"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-#"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/tmp/simsatter/simsat5625.dill"]
-           #"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-
-#["/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/tmp/simsatter/simsat5625.dill"]
-#["/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/era5625_sample/era5625_sample.dill",
-#           "/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/imerg5625_sample/imerg5625_sample.dill",
-#           "/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-
-#["/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/imerg5625_sample/imerg5625_sample.dill",]
-            #["/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/era5625_sample/era5625_sample.dill",
-            #"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-            #"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/imerg5625_sample/imerg5625_sample.dill",
-            #"/media/cs/5378dacc-4caf-4b7f-bb99-5ff9a1c29c24/cs/projects/pyrain/samples/simsat5625_sample/simsat5625_sample.dill"]
-# datapath = "/mnt/disks/mothership-big/mmap/era140625/era140625.dill" #"/data/mmap/era5625/era5625.dill"
-# datapath = ["/mnt/disks/mothership-big/mmap/era140625/era140625.dill", "/mnt/disks/mothership-big/mmap/simsat140625/simsat140625.dill"]
-
-# partition_conf = {"timerange": (datetime.datetime(2010, 1, 1, 0).timestamp(),
-#                                datetime.datetime(2010, 12, 31, 0).timestamp()),
-#                  # Define partition elements
-#                  "partitions": [{"name": "train", "len_s": 12 * 24 * 60 * 60, "increment_s": 60 * 60},
-#                                 {"name": "val", "len_s": 2 * 24 * 60 * 60, "increment_s": 60 * 60},
-#                                 {"name": "test", "len_s": 2 * 24 * 60 * 60, "increment_s": 60 * 60}]}
-# partition_type = "repeat"
+datapath = ["PATH TO ERA5625 SAMPLES DILL FILE",
+           "PATH TO IMERG5625 SAMPLES DILL FILE",
+            "PATH TO SIMSAT5625 SAMPLES DILL FILE"]
 
 partition_conf = {"train":
     {"timerange": (
@@ -80,9 +50,7 @@ dataset = Dataset(datapath=datapath,
                   sample_conf=sample_conf,
                   )
 
-simsat = dataset[((datetime.datetime(2018,1,1,0).timestamp(), datetime.datetime(2019,12,31,23).timestamp(), 3*3600), ["simsat5625/clbt"], {"interpolate":"nearest_past"})]
 tp = dataset[((datetime.datetime(2018,1,1,0).timestamp(), datetime.datetime(2019,12,31,23).timestamp(), 3600), ["era5625/tp"], None)]
 imerg = dataset[((datetime.datetime(2018,1,1,0).timestamp(), datetime.datetime(2019,12,31,23).timestamp(), 3600), ["imerg5625/precipitationcal"], None)]
 simsat = dataset[((datetime.datetime(2018,1,1,0).timestamp(), datetime.datetime(2019,12,31,23).timestamp(), 3*3600), ["simsat5625/clbt:0"], {"interpolate":"nearest_past"})]
 simsat2 = dataset[([datetime.datetime(2018,1,1,0).timestamp(), datetime.datetime(2019,12,31,23).timestamp()], ["simsat5625/clbt:0"], {})]
-a=5
