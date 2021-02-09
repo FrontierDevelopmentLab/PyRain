@@ -158,37 +158,36 @@ class DatafileJoin():
                 # deal with fractional strides and coordinate mismatches
                 tfreq_s_ds = self.dataset_config["memmap"][file_filename]["tfreq_s"]
                 tfreq_s = tfreq_s_ds if tfreq is None else tfreq
-                if tfreq_s is not None:
-                    is_tuple = isinstance(ts_indices, tuple)
-                    if is_tuple:
-                        if not (tfreq_s//tfreq_s_ds and not tfreq_s%tfreq_s_ds):
-                            ts_ix = np.linspace(ts_indices[0], ts_indices[1],
-                                                int((ts_indices[1] - ts_indices[0]) // tfreq_s))
-                            file_coords = (ts_ix-self.dataset_config["memmap"][file_filename]["daterange"][0]) / tfreq_s_ds
-                            # will be postprocessed by the second if branch below!
-                        else:
-                            ts_start = (ts_indices[0] -
-                                        self.dataset_config["memmap"][file_filename]["daterange"][0]) // tfreq_s
-                            ts_stop = (ts_indices[1] -
-                                       self.dataset_config["memmap"][file_filename]["daterange"][0]) // tfreq_s
-                            ts_step = tfreq_s // tfreq_s_ds
-                            file_coords = slice(int(ts_start), int(ts_stop), int(ts_step))
+                is_tuple = isinstance(ts_indices, tuple)
+                if is_tuple:
+                    if not (tfreq_s//tfreq_s_ds and not tfreq_s%tfreq_s_ds):
+                        ts_ix = np.linspace(ts_indices[0], ts_indices[1],
+                                            int((ts_indices[1] - ts_indices[0]) // tfreq_s))
+                        file_coords = (ts_ix-self.dataset_config["memmap"][file_filename]["daterange"][0]) / tfreq_s_ds
+                        # will be postprocessed by the second if branch below!
                     else:
-                        file_coords = (np.array(ts_indices) - self.dataset_config["memmap"][file_filename]["daterange"][
-                            0]) // tfreq_s_ds
+                        ts_start = (ts_indices[0] -
+                                    self.dataset_config["memmap"][file_filename]["daterange"][0]) // tfreq_s
+                        ts_stop = (ts_indices[1] -
+                                   self.dataset_config["memmap"][file_filename]["daterange"][0]) // tfreq_s
+                        ts_step = tfreq_s // tfreq_s_ds
+                        file_coords = slice(int(ts_start), int(ts_stop), int(ts_step))
+                else:
+                    file_coords = (np.array(ts_indices) - self.dataset_config["memmap"][file_filename]["daterange"][
+                        0]) // tfreq_s_ds
 
-                    if not isinstance(file_coords, slice):
-                        if config.get("interpolate", "NaN") == "nearest_past":
-                            file_coords = np.floor(file_coords).astype(np.int)
-                        elif config.get("interpolate", "NaN") == "nearest_future":
-                            file_coords = np.ceil(file_coords).astype(np.int)
-                        else:
-                            file_coords = np.ma.array(file_coords,
-                                                      mask=(file_coords - np.floor(file_coords)) != 0.0,
-                                                      dtype=int,
-                                                      fill_value=
-                                                      self.dataset_config["memmap"][file_filename]["daterange"][
-                                                          0])
+                if not isinstance(file_coords, slice):
+                    if config.get("interpolate", "NaN") == "nearest_past":
+                        file_coords = np.floor(file_coords).astype(np.int)
+                    elif config.get("interpolate", "NaN") == "nearest_future":
+                        file_coords = np.ceil(file_coords).astype(np.int)
+                    else:
+                        file_coords = np.ma.array(file_coords,
+                                                  mask=(file_coords - np.floor(file_coords)) != 0.0,
+                                                  dtype=int,
+                                                  fill_value=
+                                                  self.dataset_config["memmap"][file_filename]["daterange"][
+                                                      0])
 
                         # assign_dict_indices[file_filename] = file_coords
         else:
@@ -292,9 +291,14 @@ class Dataset(torch.utils.data.Dataset):
         # Select partition
         self.select_partition(self.partition_selected)
 
-    def get_file_indices_from_ts_range(self, ts_range, vbl_type):
-        rg = self.dataset._get_file_indices((*ts_range, 1), vbl_type, {})
-        return rg[0].data[0], rg[0].data[-1]
+    def get_file_indices_from_ts_range(self, ts_range, vbl_type, tfreq=None, expand=True):
+        rg = self.dataset._get_file_indices((*ts_range, tfreq), vbl_type, {})
+        if expand and isinstance(rg[0], slice):
+            ret = np.arange(rg[0].start, rg[0].stop, (rg[0].step if rg[0].step is not None else 1))
+        else:
+            ret = rg[0]
+        return ret
+        #return rg[0].data[0], rg[0].data[-1]
 
     def get_partition_ts_segments(self, partition_selected):
         """
