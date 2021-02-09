@@ -1,4 +1,4 @@
-# RainBench
+# RainBench - Getting Started
 
 ## Downloading the Dataset
 Please register [here](https://forms.gle/3AdMJsKtuJ8M1E1Y8) to download the RainBench dataset.
@@ -61,3 +61,14 @@ Example predictions for a randome test date (12 July 2019) is shown below:
 
 ### Simsat & ERA
 ![](https://i.imgur.com/tX5pmLP.gif)
+
+# Advanced Topics
+
+## Going to higher spatial resolution
+
+RainBench contains memmap datasets at two different spatial resolutions: 5.625 degrees, and 1.46025 degrees. 
+Fortunately, the NetCDF-->Memmap conversion scripts for 5.625 degrees that come with RainBench can be easily adjusted to NetCDF datasets at higher - or native - resolution. The main change needing to be done is to adjust the pixel width and height of the different variable channels. As the conversion scripts use use multiprocessing in order to saturate I/O during dataset conversion, even very high resolution datasets can be fine-grainedly converted to Memmaps.
+
+## Generating normalisation files
+Under `src/benchmark/normalise.py`, you can generate your own normalisation files to be used for on-the-fly normalisation of training data. Simply insert your own sample configuration and partitioning setup into the section marked and run the file using python3. This will generate a pickled `dill` file, which contains a dictionary with normalisation entries (and indeed, packaged functions) for each variable field across each partition. Partition of type `repeat` are expressly supported. Just as data conversion, normalisation supports multiprocessing (and out-of-core computations), meaning even datasets at large resolutions can be handled. It is also easy to add new normalisation routines in the fields provided (also have a look at `src/benchmark/transforms.py` for patch-wise local normalisation techniques).
+
