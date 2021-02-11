@@ -1,3 +1,21 @@
+# Update: Data now publicly available!
+
+We are very happy to announce that the memmap datasets are now available publicly at:
+https://console.cloud.google.com/storage/browser/aaai_release
+You require an ordinary Google account to access them.
+
+The data comes in two different resolutions, `5.625` degrees, and `1.40625` degrees.
+To see what variables (and timeranges) are contained in each dataset, simply download the associated .dill file and read out as follows (python3):
+
+```import dill
+import pprint
+with open("path-to-dill-file", "rb") as f:
+    info = dill.load(f)
+pprint.pprint(info)```
+
+Please let us know if you have any questions/issues - for technical issues please use the github issues.
+Many thanks, and we hope you will find RainBench useful!
+
 # RainBench - Getting Started
 
 ## Downloading the Dataset
