@@ -11,7 +11,8 @@ To see what variables (and timeranges) are contained in each dataset, simply dow
 import pprint
 with open("path-to-dill-file", "rb") as f:
     info = dill.load(f)
-pprint.pprint(info)```
+pprint.pprint(info)
+```
 
 Please let us know if you have any questions/issues - for technical issues please use the github issues.
 Many thanks, and we hope you will find RainBench useful!
