@@ -7,7 +7,8 @@ You require an ordinary Google account to access them.
 The data comes in two different resolutions, `5.625` degrees, and `1.40625` degrees.
 To see what variables (and timeranges) are contained in each dataset, simply download the associated .dill file and read out as follows (python3):
 
-```import dill
+```
+import dill
 import pprint
 with open("path-to-dill-file", "rb") as f:
     info = dill.load(f)
